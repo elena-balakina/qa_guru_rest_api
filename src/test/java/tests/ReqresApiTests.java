@@ -1,6 +1,7 @@
 package tests;
 
 import io.restassured.RestAssured;
+import io.restassured.http.ContentType;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -51,5 +52,28 @@ public class ReqresApiTests {
                 .then()
                 .statusCode(404)
                 .body("data", is(nullValue()));
+    }
+
+    @Test
+    public void successfulLoginTest() {
+        given().contentType(ContentType.JSON)
+                .body("{ \"email\": \"eve.holt@reqres.in\", " +
+                        "\"password\": \"cityslicka\" }")
+                .when()
+                .post("/api/login")
+                .then()
+                .statusCode(200)
+                .body("token", is("QpwL5tke4Pnpja7X4"));
+    }
+
+    @Test
+    public void unsuccessfulLoginTest() {
+        given().contentType(ContentType.JSON)
+                .body("{ \"email\": \"eve.holt@reqres.in\"}")
+                .when()
+                .post("/api/login")
+                .then()
+                .statusCode(400)
+                .body("error", is("Missing password"));
     }
 }
